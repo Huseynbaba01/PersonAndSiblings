@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/text_view"
-            android:textColor="@color/teal_700"
+            android:textColor="@color/black"
             android:text="@string/example_text"
             android:textStyle="italic"
             android:textSize="20sp"/>

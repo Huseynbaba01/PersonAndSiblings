@@ -4,10 +4,20 @@ import android.content.Context
 import io.objectbox.BoxStore
 
 object ObjectBox {
-	var boxStore: BoxStore? = null
-	fun init(context: Context){
-		if(boxStore == null){
-			boxStore = MyObjectBox
+	var boxStoreForParent: BoxStore? = null
+	var boxStoreForSibling: BoxStore? = null
+	fun init(context: Context,boolean: Boolean){
+		if(boxStoreForParent == null && !boolean){
+			boxStoreForSibling?.close()
+			boxStoreForParent = MyObjectBox
+				.builder()
+				.androidContext(context.applicationContext)
+				.build()
+		}
+
+		if(boxStoreForSibling == null && boolean){
+			boxStoreForParent?.close()
+			boxStoreForSibling = MyObjectBox
 				.builder()
 				.androidContext(context.applicationContext)
 				.build()
