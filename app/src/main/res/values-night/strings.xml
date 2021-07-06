@@ -1,5 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PersonAndSiblings</string>
     <string name="find_between">find between</string>
     <string name="add_parent">add parent</string>
     <string name="example_text">example text here</string>

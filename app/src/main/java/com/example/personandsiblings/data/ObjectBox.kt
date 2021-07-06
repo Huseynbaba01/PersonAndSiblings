@@ -12,7 +12,5 @@ object ObjectBox {
 				.androidContext(context.applicationContext)
 				.build()
 		}
-//				boxStore = MyObjectBox
-
 	}
 }

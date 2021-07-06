@@ -7,9 +7,11 @@ import io.objectbox.relation.ToMany
 
 @Entity
 data class Parent(
-	@Id val id: Long,
-	val name:String
+	@Id var id: Long? = 0,
+	var name:String? = null
 ){
+
+
 	@Backlink(to = "parent")
 	lateinit var siblings: ToMany<Sibling>
 }

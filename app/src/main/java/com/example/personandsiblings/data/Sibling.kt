@@ -6,8 +6,8 @@ import io.objectbox.relation.ToOne
 
 @Entity
 data class Sibling(
-	@Id val id: Long,
-	val name: String
+	@Id var id: Long? = 0,
+	var name: String? = null
 ){
 	lateinit var parent: ToOne<Parent>
 }
