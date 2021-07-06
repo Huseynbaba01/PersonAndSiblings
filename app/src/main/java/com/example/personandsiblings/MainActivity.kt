@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import com.example.personandsiblings.data.ObjectBox
 import com.example.personandsiblings.data.ObjectBox.boxStore
+import com.example.personandsiblings.data.ObjectBox.init
 import com.example.personandsiblings.data.Parent
 import com.example.personandsiblings.data.Sibling
 import io.objectbox.Box
@@ -78,6 +80,7 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	private fun initializeBox(){
+		init(this)
 		box = boxStore!!.boxFor(Parent::class.java)
 	}
 }
