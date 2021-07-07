@@ -10,7 +10,7 @@ object ObjectBoxForSiblings {
 		if(boxStoreForSibling == null){
 //			ObjectBoxForSiblings.boxStoreForParent?.close()
 			boxStoreForSibling = MyObjectBox.builder()
-				.androidContext(context.applicationContext)
+				.androidContext(context)
 				.build()
 		}
 	}

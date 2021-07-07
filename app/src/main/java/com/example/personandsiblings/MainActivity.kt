@@ -1,6 +1,7 @@
 package com.example.personandsiblings
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -12,8 +13,9 @@ import com.example.personandsiblings.data.Parent
 import com.example.personandsiblings.data.Sibling
 import com.example.personandsiblings.data.Sibling_
 import io.objectbox.Box
+import io.objectbox.BoxStore
+import io.objectbox.android.AndroidObjectBrowser
 import io.objectbox.query.Query
-import io.objectbox.query.QueryBuilder
 import io.objectbox.reactive.DataSubscription
 
 
@@ -39,6 +41,13 @@ class MainActivity : AppCompatActivity() {
 		initializeBoxForParent()
 		initializeQueryForParent()
 		initializeObserver()
+		if (BuildConfig.DEBUG) {
+			val start = AndroidObjectBrowser(boxStoreForParent).start(this)
+			Log.d("Browser started: %s", start.toString())
+		}
+		else{
+			Log.i("ObjectBoxSecond",BoxStore.isObjectBrowserAvailable().toString())
+		}
 //		initializeBoxForSiblings()
 //		initializeQueryForSiblings()
 

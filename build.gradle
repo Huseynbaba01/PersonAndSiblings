@@ -14,12 +14,11 @@ buildscript {
         // in the individual module build.gradle files
     }
 }
-
 allprojects {
     repositories {
         google()
         mavenCentral()
-         // Warning: this repository is going to shut down soon
+        // Warning: this repository is going to shut down soon
     }
 }
 
