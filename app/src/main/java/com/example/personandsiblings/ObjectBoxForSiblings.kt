@@ -1,3 +1,6 @@
+/* 
+NOT USED CLASS
+*/
 package com.example.personandsiblings
 
 import android.content.Context
