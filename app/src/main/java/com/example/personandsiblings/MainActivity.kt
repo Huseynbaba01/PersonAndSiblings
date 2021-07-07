@@ -1,21 +1,21 @@
 package com.example.personandsiblings
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import com.example.personandsiblings.data.ObjectBox.boxStoreForParent
-import com.example.personandsiblings.data.ObjectBox.boxStoreForSibling
-import com.example.personandsiblings.data.ObjectBox.init
+import androidx.appcompat.app.AppCompatActivity
+import com.example.personandsiblings.ObjectBoxForSiblings.boxStoreForSibling
+import com.example.personandsiblings.data.ObjectBoxForParent.boxStoreForParent
+import com.example.personandsiblings.data.ObjectBoxForParent.init
 import com.example.personandsiblings.data.Parent
-import com.example.personandsiblings.data.Parent_
 import com.example.personandsiblings.data.Sibling
 import com.example.personandsiblings.data.Sibling_
 import io.objectbox.Box
-import io.objectbox.kotlin.inValues
 import io.objectbox.query.Query
+import io.objectbox.query.QueryBuilder
 import io.objectbox.reactive.DataSubscription
+
 
 class MainActivity : AppCompatActivity() {
 	private lateinit var buttonAdd:Button
@@ -29,7 +29,9 @@ class MainActivity : AppCompatActivity() {
 	private lateinit var subscription: DataSubscription
 	private var parent = Parent()
 	private var sibling = Sibling()
-	private var listOfUsersBetween = hashSetOf<Parent>()
+//	private var listOfUsersBetween = hashSetOf<Parent>()
+	private var firstIndex = 0.toLong()
+	private var lastIndex = 0.toLong()
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_main)
@@ -37,10 +39,11 @@ class MainActivity : AppCompatActivity() {
 		initializeBoxForParent()
 		initializeQueryForParent()
 		initializeObserver()
+//		initializeBoxForSiblings()
+//		initializeQueryForSiblings()
 
 		buttonClickListeners()
 	}
-
 	private fun initializeQueryForSiblings() {
 		queryForSiblings = boxForSiblings.query().build()
 //		boxForSiblings.query().between()
@@ -48,6 +51,12 @@ class MainActivity : AppCompatActivity() {
 
 	private fun buttonClickListeners() {
 		buttonAdd.setOnClickListener {
+			/*if(boxStoreForParent!!.isClosed){
+				init(this*//*,false*//*)
+				initializeBoxForParent()
+				initializeQueryForParent()
+				initializeObserver()
+			}*/
 			var strings = inputEditText.text.toString().split(" ")
 			parent.id = 0
 			parent.name = strings[0]
@@ -64,35 +73,69 @@ class MainActivity : AppCompatActivity() {
 
 		}
 		buttonFind.setOnClickListener {
-			initializeBoxForSiblings()
-			initializeQueryForSiblings()
+			/*if(boxStoreForSibling!!.isClosed){
+				init(this,true)
+				initializeBoxForSiblings()
+				initializeQueryForSiblings()
+			}*/
 			val strings = inputEditText.text.toString().split(" ")
 			/*box.all.forEach {
 			}*/
-			val firstIndex = strings[0].toLong()
-			val lastIndex = strings[1].toLong()
+			firstIndex = strings[0].toLong()
+			lastIndex = strings[1].toLong()
 //			boxForSiblings.
-			var listOfSibling = boxForSiblings.query().between(Sibling_.age,firstIndex,lastIndex).build()
-			val stringBuilder = StringBuilder()
+			/*val listOfSibling = boxForSiblings.query().between(Sibling_.age,firstIndex,lastIndex).build()
+
 			listOfSibling.forEach {
 				listOfUsersBetween.add(it.parent.target)
-				/*stringBuilder.append(it.parent.target.id.toString()
+				*//*stringBuilder.append(it.parent.target.id.toString()
 						+ ". "
 						+ it.parent.target.name
-						+ "\n")*/
+						+ "\n")*//*
 			}
 			listOfUsersBetween.sortedBy {
 				it.id
-			}.toList().forEach {
+			}.*/
+			val stringBuilder = StringBuilder()
+			/////////////////////////////
+			/*val builder = boxForParent
+				.query()
+			builder.backlink(Sibling_.parent)
+				.between(Sibling_.age,firstIndex,lastIndex)
+			val list = builder
+				.build()
+				.find()*/
+			///////////////////////////
+			val list = withQuery()
+//			val list = withFilter()
+			list.forEach {
 				stringBuilder.append(it.id.toString()
 						+ ". "
 						+ it.name
 						+ "\n")
 			}
 
+
 			textView.text = stringBuilder
-			initializeBoxForParent()
-			initializeQueryForParent()
+			//After finishing work with the
+//			init(this,false)
+		}
+	}
+	private fun withQuery(): List<Parent>{
+		val builder = boxForParent
+			.query()
+		builder.backlink(Sibling_.parent)
+			.between(Sibling_.age,firstIndex,lastIndex)
+		return builder
+			.build()
+			.find()
+
+	}
+	private fun withFilter(): List<Parent>{
+		return boxForParent.all.filter { parent ->
+			parent.siblings.hasA { sibling ->
+				sibling.age!! in firstIndex..lastIndex
+			}
 		}
 	}
 
@@ -102,7 +145,6 @@ class MainActivity : AppCompatActivity() {
 		buttonAdd = findViewById(R.id.button_add_parent)
 		buttonFind = findViewById(R.id.button_find_between)
 	}
-
 	private fun initializeObserver() {
 		subscription = queryForParent.subscribe().observer { first ->
 			val stringBuilder = StringBuilder()
@@ -115,22 +157,31 @@ class MainActivity : AppCompatActivity() {
 			textView.text = stringBuilder
 		}
 	}
-
 	private fun initializeQueryForParent() {
 		queryForParent = boxForParent
 			.query()
+			/*.backlink(Sibling_.parent)
+			.between(Sibling_.age,firstIndex,lastIndex)*/
 			.build()
+		val builder = boxForParent.query()
+// ...which are linked from a Person named "Elmo"
+		builder.backlink(Sibling_.parent).between(Sibling_.age,firstIndex,lastIndex)
+		val sesameStreetsWithElmo = builder.build().find()
 	}
-
+	/*var filteredParents: List<Parent> = boxForParent.query()
+		.
+		.find()*/
 	private fun initializeBoxForParent(){
 //		boxStoreForSibling?.close()
-		init(this,false)
+		init(this/*,false*/)
+		//if the second argument (boolean) is false it will open a (the) box for the parent else for the siblings
 		boxForParent = boxStoreForParent!!.boxFor(Parent::class.java)
 	}
 
 	private fun initializeBoxForSiblings(){
 //		boxStoreForParent?.close()
-		init(this,true)
+		ObjectBoxForSiblings.init(this/*,true*/)
+		//if the second argument (boolean) is false it will open a (the) box for the parent else for the siblings
 		boxForSiblings = boxStoreForSibling!!.boxFor(Sibling::class.java)
 	}
 }
