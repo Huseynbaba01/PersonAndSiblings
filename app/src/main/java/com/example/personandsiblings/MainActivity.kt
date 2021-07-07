@@ -106,8 +106,8 @@ class MainActivity : AppCompatActivity() {
 				.build()
 				.find()*/
 			///////////////////////////
-			val list = withQuery()
-//			val list = withFilter()
+//			val list = withQuery()
+			val list = withFilter()
 			list.forEach {
 				stringBuilder.append(it.id.toString()
 						+ ". "
